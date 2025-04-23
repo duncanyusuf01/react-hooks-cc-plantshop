@@ -1,30 +1,43 @@
 import React, { useState } from "react";
 
-// Adds new plant with its details
 function NewPlantForm({ onAddPlant }) {
-  
   const [formData, setFormData] = useState({
     name: "",
     image: "",
-    price: "",
+    price: ""
   });
 
-// handleChange updates the formData 
-  const handleChange = (e) => {
+  function handleChange(e) {
     const { name, value } = e.target;
     setFormData({
-      ...formData, 
-      [name]: value, 
+      ...formData,
+      [name]: value
     });
-  };
+  }
 
-    const handleSubmit = (e) => {
-    e.preventDefault(); 
-    onAddPlant(formData); 
-    setFormData({ name: "", image: "", price: "" }); // Reset form fields
-  };
+  function handleSubmit(e) {
+    e.preventDefault();
 
-  // The form UI with inputs for plant name, image URL, and price
+    const newPlant = {
+      name: formData.name,
+      image: formData.image,
+      price: formData.price  
+    };
+
+    fetch("http://localhost:6001/plants", {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/JSON"  
+      },
+      body: JSON.stringify(newPlant)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        onAddPlant(data); 
+        setFormData({ name: "", image: "", price: "" })
+      });
+  }
+
   return (
     <div className="new-plant-form">
       <h2>New Plant</h2>
